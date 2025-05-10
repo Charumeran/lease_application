@@ -6,7 +6,7 @@ import { authOptions } from "@/lib/auth-options";
 // 資材詳細の取得
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -18,7 +18,7 @@ export async function GET(
       );
     }
 
-    const id = params.id;
+    const id = context.params.id;
 
     // 資材の詳細取得
     const equipment = await prisma.equipment.findUnique({
@@ -61,7 +61,7 @@ export async function GET(
 // 資材の更新
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -73,7 +73,7 @@ export async function PUT(
       );
     }
 
-    const id = params.id;
+    const id = context.params.id;
     const body = await req.json();
     const { 
       name, 
@@ -143,7 +143,7 @@ export async function PUT(
 // 資材の削除
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -155,7 +155,7 @@ export async function DELETE(
       );
     }
 
-    const id = params.id;
+    const id = context.params.id;
 
     // 資材の存在確認
     const equipment = await prisma.equipment.findUnique({
