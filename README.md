@@ -75,6 +75,38 @@ npm run dev
    npx prisma db seed
    ```
 
+## Supabaseでの本番用データベース設定
+
+1. **Supabaseアカウントの作成**:
+   - [Supabase](https://supabase.com/) にアクセスし、GitHubアカウントでサインインします
+
+2. **新しいプロジェクトを作成**:
+   - ダッシュボードから「New project」をクリック
+   - 組織を選択（必要に応じて新しい組織を作成）
+   - プロジェクト名を設定（例: `lease-db`）
+   - 安全なデータベースパスワードを設定
+   - 近いリージョンを選択（例: 東京）
+   - 「Create new project」をクリック
+
+3. **Vercelとの連携**:
+   - Vercelダッシュボードでプロジェクトを選択
+   - 「Settings」→「Integrations」→「Browse Marketplace」
+   - 「Supabase」を検索して選択
+   - 「Add Integration」をクリック
+   - VercelアカウントとSupabaseプロジェクトを選択して連携
+
+4. **環境変数の取得とセットアップ**:
+   ```bash
+   npx vercel link
+   npx vercel env pull
+   ```
+   
+5. **マイグレーションとシードデータの適用**:
+   ```bash
+   npx prisma migrate deploy
+   npm run seed
+   ```
+
 ## テストアカウント
 
 - 管理者ユーザー:
