@@ -7,8 +7,20 @@ import {
   ArrowDown, ArrowUp, Download, Upload, MoreHorizontal
 } from 'lucide-react';
 
+// インベントリアイテムの型定義
+type InventoryItem = {
+  id: number;
+  name: string;
+  category: string;
+  quantity: number;
+  available: number;
+  status: string;
+  lastUpdated: string;
+  [key: string]: string | number; // インデックスシグネチャを追加
+};
+
 // モックデータ
-const inventoryMockData = [
+const inventoryMockData: InventoryItem[] = [
   { id: 1, name: '単管パイプ 1.5m', category: '足場材', quantity: 120, available: 80, status: 'AVAILABLE', lastUpdated: '2024-05-01' },
   { id: 2, name: '単管パイプ 2.0m', category: '足場材', quantity: 200, available: 150, status: 'AVAILABLE', lastUpdated: '2024-05-01' },
   { id: 3, name: 'クランプ 直交', category: '足場材', quantity: 300, available: 250, status: 'AVAILABLE', lastUpdated: '2024-04-28' },
@@ -37,7 +49,7 @@ const categories = [
 export default function InventoryPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [sortField, setSortField] = useState('name');
+  const [sortField, setSortField] = useState<string>('name');
   const [sortDirection, setSortDirection] = useState('asc');
   const [showFilters, setShowFilters] = useState(false);
 
@@ -57,14 +69,17 @@ export default function InventoryPage() {
           ? fieldA.localeCompare(fieldB) 
           : fieldB.localeCompare(fieldA);
       } else {
+        // 数値の場合、型アサーションを使用して計算を行う
+        const numA = fieldA as number;
+        const numB = fieldB as number;
         return sortDirection === 'asc' 
-          ? fieldA - fieldB 
-          : fieldB - fieldA;
+          ? numA - numB 
+          : numB - numA;
       }
     });
 
   // ソート切り替え
-  const handleSort = (field) => {
+  const handleSort = (field: string) => {
     if (sortField === field) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
     } else {
@@ -74,7 +89,7 @@ export default function InventoryPage() {
   };
 
   // ソート表示用のアイコン
-  const renderSortIcon = (field) => {
+  const renderSortIcon = (field: string) => {
     if (sortField !== field) return <ArrowDownUp className="ml-1 h-4 w-4 text-gray-400" />;
     return sortDirection === 'asc' 
       ? <ArrowDown className="ml-1 h-4 w-4 text-blue-500" />
