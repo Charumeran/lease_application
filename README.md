@@ -1,22 +1,89 @@
 # リースシェア - 建設資材リースプラットフォーム
 
-リースシェアは、建設会社間で余剰資材をリースし合うことで、資材の有効活用とコスト削減を実現するプラットフォームです。
+建設会社間での資材のリース・シェアリングを可能にするプラットフォームです。
 
-## 機能概要
+## 機能
 
-- **ユーザー認証**: 会社とユーザーの登録、ログイン機能
-- **資材管理**: 自社の建設資材の登録、編集、削除
-- **資材検索**: カテゴリや条件による他社の資材検索
-- **リース機能**: 資材のリースリクエスト、承認、返却管理
-- **チャット機能**: 取引先とのメッセージ交換
+- ユーザー認証（会社アカウント管理）
+- 建設資材の在庫管理
+- 利用可能な資材の検索
+- リース申請・管理
+- 企業間チャット
 
 ## 技術スタック
 
-- **フロントエンド**: Next.js、Tailwind CSS
-- **バックエンド**: Next.js API Routes
-- **データベース**: PostgreSQL
-- **認証**: NextAuth.js
-- **ORM**: Prisma
+- Next.js
+- TypeScript
+- Tailwind CSS
+- Prisma
+- PostgreSQL
+- NextAuth.js
+
+## 開発環境のセットアップ
+
+1. リポジトリをクローン
+```bash
+git clone https://github.com/your-username/lease_application.git
+cd lease_application
+```
+
+2. 依存関係をインストール
+```bash
+npm install
+```
+
+3. `.env`ファイルを作成し、必要な環境変数を設定
+```
+DATABASE_URL="postgresql://postgres:password@localhost:5432/lease_db"
+NEXTAUTH_SECRET="your-secret-key-here"
+NEXTAUTH_URL="http://localhost:3000"
+```
+
+4. データベースマイグレーションを実行
+```bash
+npx prisma migrate dev
+```
+
+5. サンプルデータの投入
+```bash
+npm run seed
+```
+
+6. 開発サーバーを起動
+```bash
+npm run dev
+```
+
+## Vercelへのデプロイ方法
+
+1. [Vercel](https://vercel.com)にアクセスし、アカウントを作成またはログインします
+
+2. 「New Project」をクリックし、GitHubリポジトリをインポートします
+
+3. 環境変数を設定します:
+   - `DATABASE_URL`: PostgreSQLデータベースの接続URL（Vercel Postgresまたは外部サービス）
+   - `NEXTAUTH_SECRET`: 認証用のシークレットキー（ランダムな文字列）
+   - `DATABASE_URL`が外部サービスの場合は、そのサービスのIPアドレス制限等を確認してください
+
+4. デプロイ設定を確認し、「Deploy」ボタンをクリックします
+
+5. デプロイ完了後、以下のコマンドを実行してデータベースをセットアップします:
+   ```bash
+   # Vercel CLIを使用する場合
+   vercel env pull .env.production.local
+   npx prisma migrate deploy
+   npx prisma db seed
+   ```
+
+## テストアカウント
+
+- 管理者ユーザー:
+  - Email: admin@example.com
+  - パスワード: password123
+
+- 一般ユーザー:
+  - Email: user@example.com
+  - パスワード: password123
 
 ## ディレクトリ構造
 
@@ -37,63 +104,6 @@
 │   └── generated/        # Prisma生成ファイル
 └── docker-compose.yml    # Docker設定
 ```
-
-## セットアップ手順
-
-### 環境変数の設定
-
-`.env`ファイルを作成し、以下の内容を設定してください：
-
-```
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/lease_db"
-NEXTAUTH_SECRET="lease-app-secret-key-123"
-NEXTAUTH_URL="http://localhost:3000"
-```
-
-### データベースの起動
-
-PostgreSQLをDockerで起動します：
-
-```bash
-# データベース用ディレクトリの作成
-mkdir -p .docker/postgres
-
-# Dockerコンテナの起動
-docker-compose up -d
-```
-
-### データベースの初期化
-
-```bash
-# Prismaマイグレーションの実行
-npx prisma migrate dev
-
-# データベースのスキーマ生成
-npx prisma generate
-
-# サンプルデータの投入
-npm run seed
-```
-
-### アプリケーションの起動
-
-```bash
-# 開発サーバーの起動
-npm run dev
-```
-
-ブラウザで http://localhost:3000 にアクセスしてください。
-
-### テストアカウント
-
-以下のアカウントでログインできます：
-
-- **会社1**: 
-  - メールアドレス: yamada@example.com
-  - パスワード: password123
-- **会社2**: 
-  - メールアドレス: sato@example.com
-  - パスワード: password123
 
 ## DBeaver でのデータベース確認方法
 
