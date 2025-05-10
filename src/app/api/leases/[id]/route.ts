@@ -4,10 +4,16 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { Prisma } from "@prisma/client";
 
+interface RouteParams {
+  params: {
+    id: string;
+  }
+}
+
 // リース詳細の取得
 export async function GET(
   req: NextRequest,
-  context: { params: { id: string } }
+  { params }: RouteParams
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -19,7 +25,7 @@ export async function GET(
       );
     }
 
-    const id = context.params.id;
+    const id = params.id;
 
     // リースの詳細取得
     const lease = await prisma.lease.findUnique({
@@ -66,7 +72,7 @@ export async function GET(
 // リースのステータス更新
 export async function PATCH(
   req: NextRequest,
-  context: { params: { id: string } }
+  { params }: RouteParams
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -78,7 +84,7 @@ export async function PATCH(
       );
     }
 
-    const id = context.params.id;
+    const id = params.id;
     const body = await req.json();
     const { status, notes } = body;
 
