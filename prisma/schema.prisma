@@ -1,0 +1,117 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ユーザーモデル
+model User {
+  id                String         @id @default(uuid())
+  email             String         @unique
+  name              String
+  password          String
+  phone             String?
+  role              String         @default("USER") // ADMIN, USER
+  companyId         String
+  company           Company        @relation(fields: [companyId], references: [id])
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  leasesAsLender    Lease[]        @relation("LenderUser")
+  leasesAsBorrower  Lease[]        @relation("BorrowerUser")
+  sentMessages      ChatMessage[]  @relation("SenderUser")
+  receivedMessages  ChatMessage[]  @relation("ReceiverUser")
+}
+
+// 会社情報モデル
+model Company {
+  id              String      @id @default(uuid())
+  name            String
+  address         String
+  prefecture      String
+  city            String
+  zipCode         String?
+  phone           String?
+  description     String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  users           User[]
+  equipments      Equipment[]
+  leasesAsLender  Lease[]     @relation("LenderCompany")
+  leasesAsBorrower Lease[]    @relation("BorrowerCompany")
+}
+
+// 資材カテゴリモデル
+model EquipmentCategory {
+  id          String      @id @default(uuid())
+  name        String      @unique
+  description String?
+  equipments  Equipment[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+// 資材モデル
+model Equipment {
+  id          String            @id @default(uuid())
+  name        String
+  description String?
+  quantity    Int
+  available   Int               @default(0) // 利用可能な数量
+  daily_rate  Float?            // 日額レート
+  categoryId  String
+  category    EquipmentCategory @relation(fields: [categoryId], references: [id])
+  companyId   String
+  company     Company           @relation(fields: [companyId], references: [id])
+  image       String?
+  location    String?           // 保管場所
+  status      String            @default("AVAILABLE") // AVAILABLE, MAINTENANCE, OUT_OF_STOCK
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  leases      Lease[]
+}
+
+// リース（貸出）モデル
+model Lease {
+  id              String    @id @default(uuid())
+  equipmentId     String
+  equipment       Equipment @relation(fields: [equipmentId], references: [id])
+  quantity        Int       // レンタル数量
+  lenderCompanyId String
+  lenderCompany   Company   @relation("LenderCompany", fields: [lenderCompanyId], references: [id])
+  lenderUserId    String
+  lenderUser      User      @relation("LenderUser", fields: [lenderUserId], references: [id])
+  borrowerCompanyId String
+  borrowerCompany Company   @relation("BorrowerCompany", fields: [borrowerCompanyId], references: [id])
+  borrowerUserId  String
+  borrowerUser    User      @relation("BorrowerUser", fields: [borrowerUserId], references: [id])
+  startDate       DateTime
+  endDate         DateTime
+  status          String    @default("REQUESTED") // REQUESTED, APPROVED, ACTIVE, COMPLETED, CANCELLED
+  notes           String?
+  totalPrice      Float?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+// チャットメッセージモデル
+model ChatMessage {
+  id          String   @id @default(uuid())
+  senderId    String
+  sender      User     @relation("SenderUser", fields: [senderId], references: [id])
+  receiverId  String
+  receiver    User     @relation("ReceiverUser", fields: [receiverId], references: [id])
+  content     String
+  read        Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
