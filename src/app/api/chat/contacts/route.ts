@@ -3,6 +3,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 
+// 連絡先の型定義
+type Contact = {
+  id: string;
+  name: string;
+  email: string;
+  company_name: string;
+  last_message: string | null;
+  last_message_time: Date | null;
+  unread_count: number;
+};
+
 // チャット連絡先一覧の取得
 export async function GET(req: NextRequest) {
   try {
@@ -18,7 +29,7 @@ export async function GET(req: NextRequest) {
     const userId = session.user.id;
     
     // 最新のメッセージ相手を取得
-    const contactsWithMessages = await prisma.$queryRaw`
+    const contactsWithMessages = await prisma.$queryRaw<Contact[]>`
       WITH UserContacts AS (
         SELECT DISTINCT
           CASE
@@ -61,7 +72,7 @@ export async function GET(req: NextRequest) {
     `;
 
     // リース取引のある相手も連絡先に加える
-    const leaseContacts = await prisma.$queryRaw`
+    const leaseContacts = await prisma.$queryRaw<Contact[]>`
       WITH LeaseContacts AS (
         SELECT DISTINCT
           CASE
