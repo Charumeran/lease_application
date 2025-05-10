@@ -4,16 +4,10 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { Prisma } from "@prisma/client";
 
-interface RouteParams {
-  params: {
-    id: string;
-  }
-}
-
 // リース詳細の取得
 export async function GET(
   req: NextRequest,
-  { params }: RouteParams
+  { params }: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -72,7 +66,7 @@ export async function GET(
 // リースのステータス更新
 export async function PATCH(
   req: NextRequest,
-  { params }: RouteParams
+  { params }: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
