@@ -107,6 +107,130 @@ npm run dev
    npm run seed
    ```
 
+## 開発環境と本番環境の切り替え
+
+### 環境変数の管理
+
+1. **開発環境用の環境変数**:
+   - ローカル開発では`.env.local`または`.env.development`ファイルを使用
+   - 例:
+     ```
+     DATABASE_URL="postgresql://postgres:password@localhost:5432/lease_db"
+     NEXTAUTH_URL="http://localhost:3000"
+     NEXTAUTH_SECRET="dev-secret-key"
+     ```
+
+2. **本番環境用の環境変数**:
+   - Vercelの環境変数設定で管理
+   - 本番環境の環境変数を取得するには:
+     ```bash
+     npx vercel env pull --environment=production
+     ```
+   - これにより`.env.production.local`ファイルが作成されます
+
+### データベース操作の環境切り替え
+
+1. **開発環境のデータベース操作**:
+   
+   - **スキーマ変更の適用と開発**:
+     ```bash
+     # スキーマの変更を開発環境に適用
+     npx prisma migrate dev --name 変更の名前
+     
+     # Prismaクライアントの更新
+     npx prisma generate
+     
+     # データベースのリセットと再構築（開発時のみ）
+     npx prisma migrate reset
+     ```
+   
+   - **データの操作（開発環境）**:
+     ```bash
+     # Prisma Studioでデータを視覚的に操作
+     npx prisma studio
+     
+     # シードデータの投入
+     npm run seed
+     ```
+
+2. **本番環境のデータベース操作**:
+   
+   - **本番環境用のマイグレーション**:
+     ```bash
+     # 本番環境の環境変数を取得
+     npx vercel env pull --environment=production
+     
+     # 本番環境にマイグレーションを適用（破壊的変更には注意）
+     DATABASE_URL=本番環境のURL npx prisma migrate deploy
+     
+     # または.env.production.localから読み込む場合
+     dotenv -e .env.production.local -- npx prisma migrate deploy
+     ```
+   
+   - **本番データの安全な操作**:
+     ```bash
+     # 本番環境のデータをダンプ（バックアップ）
+     pg_dump -h ホスト名 -U ユーザー名 -d データベース名 > backup.sql
+     
+     # 本番環境でのシードデータ投入（必要な場合のみ）
+     DATABASE_URL=本番環境のURL npm run seed
+     ```
+
+3. **Supabaseの管理と操作**:
+   
+   - **Supabaseダッシュボードでの操作**:
+     - テーブルデータの閲覧・編集: Table Editor機能
+     - SQLの直接実行: SQL Editor機能
+     - バックアップの取得: Database設定からBackup機能
+   
+   - **Supabase CLIを使った操作**:
+     ```bash
+     # Supabase CLIのインストール
+     npm install -g supabase
+     
+     # ログイン
+     supabase login
+     
+     # データベースへの接続情報取得
+     supabase db remote commit
+     ```
+
+### デプロイフローの管理
+
+1. **開発からステージング、本番へのフロー**:
+   ```bash
+   # 開発ブランチでの作業
+   git checkout -b feature/新機能
+
+   # 変更をコミット
+   git add .
+   git commit -m "新機能の追加"
+
+   # ステージング環境へのプッシュ（プルリクエストを作成）
+   git push origin feature/新機能
+
+   # Vercelでプレビューデプロイが自動的に行われます
+
+   # 本番環境へのデプロイ（mainブランチへのマージ後）
+   git checkout main
+   git merge feature/新機能
+   git push origin main
+   ```
+
+2. **環境ごとのビルドと実行**:
+   ```bash
+   # 開発環境
+   npm run dev
+
+   # ステージング環境用ビルド
+   NODE_ENV=staging npm run build
+   npm start
+
+   # 本番環境用ビルド
+   NODE_ENV=production npm run build
+   npm start
+   ```
+
 ## テストアカウント
 
 - 管理者ユーザー:
