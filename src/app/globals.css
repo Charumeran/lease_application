@@ -1,26 +1,70 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f7f8fa;
+  --foreground: #1a1c21;
+  --primary: #3452a5;
+  --primary-dark: #293d85;
+  --secondary: #ff6b35;
+  --accent: #44bba4;
+  --gray-light: #e5e7eb;
+  --gray-medium: #9ca3af;
+  --gray-dark: #4b5563;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: 'Noto Sans JP', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'Source Code Pro', monospace;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #121418;
+    --foreground: #f3f4f6;
+    --primary: #4869d0;
+    --primary-dark: #3c58b5;
+    --secondary: #ff8257;
+    --accent: #50d5bc;
+    --gray-light: #374151;
+    --gray-medium: #6b7280;
+    --gray-dark: #9ca3af;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  line-height: 1.6;
+}
+
+/* カスタムボタンスタイル */
+.btn-primary {
+  background-color: var(--primary);
+  color: white;
+  transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+}
+
+.btn-secondary {
+  background-color: var(--secondary);
+  color: white;
+}
+
+/* カスタムカードスタイル */
+.card {
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
