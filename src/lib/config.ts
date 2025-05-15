@@ -17,7 +17,12 @@ const getNodeEnv = (): NodeEnv => {
 
 // データベース接続情報を取得
 const getDatabaseUrl = (): string => {
-  // 環境変数から直接取得 (.env.localや.envファイルから読み込まれる)
+  // Vercelの環境変数を優先
+  if (process.env.POSTGRES_PRISMA_URL) {
+    return process.env.POSTGRES_PRISMA_URL;
+  }
+  
+  // 従来の環境変数もサポート
   if (process.env.DATABASE_URL) {
     return process.env.DATABASE_URL;
   }
