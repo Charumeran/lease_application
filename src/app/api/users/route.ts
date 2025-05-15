@@ -28,15 +28,27 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // メールアドレスの重複チェック
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
-    });
+    console.log("ユーザー登録処理を開始します:", { email });
+    
+    try {
+      // メールアドレスの重複チェック
+      console.log(`findUnique実行前: email=${email}`);
+      const existingUser = await prisma.user.findUnique({
+        where: { email },
+      });
+      console.log("findUnique実行結果:", existingUser);
 
-    if (existingUser) {
+      if (existingUser) {
+        return NextResponse.json(
+          { error: "このメールアドレスは既に使用されています" },
+          { status: 400 }
+        );
+      }
+    } catch (findError) {
+      console.error("ユーザー検索中にエラーが発生:", findError);
       return NextResponse.json(
-        { error: "このメールアドレスは既に使用されています" },
-        { status: 400 }
+        { error: `ユーザー検索エラー: ${findError instanceof Error ? findError.message : '不明なエラー'}` },
+        { status: 500 }
       );
     }
 
@@ -87,7 +99,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error("ユーザー登録エラー:", error);
     return NextResponse.json(
-      { error: "ユーザー登録に失敗しました" },
+      { error: `ユーザー登録に失敗しました: ${error instanceof Error ? error.message : '不明なエラー'}` },
       { status: 500 }
     );
   }

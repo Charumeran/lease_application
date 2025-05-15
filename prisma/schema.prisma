@@ -12,6 +12,8 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL") // 環境変数から読み込み
+  // PostgreSQLの接続プール用設定（Supabase + PGBouncer用）
+  directUrl = env("POSTGRES_URL_NON_POOLING") // 直接接続（マイグレーション用）
 }
 
 // ユーザーモデル

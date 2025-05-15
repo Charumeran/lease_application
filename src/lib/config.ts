@@ -42,6 +42,17 @@ const getDatabaseUrl = (): string => {
   }
 };
 
+// 直接接続用URL（マイグレーション用）
+const getDirectDatabaseUrl = (): string => {
+  // Vercelの環境変数を優先
+  if (process.env.POSTGRES_URL_NON_POOLING) {
+    return process.env.POSTGRES_URL_NON_POOLING;
+  }
+  
+  // 直接接続用URLがない場合は通常の接続URLを使用
+  return getDatabaseUrl();
+};
+
 // Supabase URL を取得
 const getSupabaseUrl = (): string => {
   if (process.env.SUPABASE_URL) {
@@ -91,6 +102,7 @@ export const config = {
 
   // データベース
   databaseUrl: getDatabaseUrl(),
+  directDatabaseUrl: getDirectDatabaseUrl(),
   
   // Supabase - 環境変数から取得
   supabaseUrl: getSupabaseUrl(),
