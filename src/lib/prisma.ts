@@ -1,4 +1,5 @@
 import { PrismaClient } from '../generated/prisma'
+import { config } from './config'
 
 // PrismaClientをグローバルにキャッシュするための変数
 const globalForPrisma = global as unknown as { prisma: PrismaClient }
@@ -7,10 +8,15 @@ const globalForPrisma = global as unknown as { prisma: PrismaClient }
 export const prisma =
   globalForPrisma.prisma ||
   new PrismaClient({
-    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+    log: config.isDev ? ['query', 'error', 'warn'] : ['error'],
+    datasources: {
+      db: {
+        url: config.databaseUrl,
+      },
+    },
   })
 
 // 開発モード以外ではグローバルオブジェクトにキャッシュ
-if (process.env.NODE_ENV !== 'development') globalForPrisma.prisma = prisma
+if (!config.isDev) globalForPrisma.prisma = prisma
 
 export default prisma 
