@@ -11,14 +11,13 @@ checkEnvironment();
 
 // 本番環境でない場合は警告
 if (!config.isProd) {
-  console.log(`警告: アプリケーションは${config.nodeEnv}環境で実行されています`);
+  console.log(`アプリケーションは${config.nodeEnv}環境で実行されています`);
 }
 
 // データベース接続情報をマスク処理して表示
 const maskDatabaseUrl = (url: string): string => {
   try {
     const dbUrl = new URL(url);
-    const username = dbUrl.username;
     // パスワードが含まれる場合はマスク
     if (dbUrl.password) {
       dbUrl.password = '******';
@@ -29,7 +28,10 @@ const maskDatabaseUrl = (url: string): string => {
   }
 };
 
-console.log(`データベース接続先: ${maskDatabaseUrl(config.databaseUrl)}`);
+// 開発環境のみでログ出力
+if (config.isDev) {
+  console.log(`データベース接続先: ${maskDatabaseUrl(config.databaseUrl)}`);
+}
 
 export default function initializeApp() {
   // アプリケーション初期化処理がある場合はここに追加

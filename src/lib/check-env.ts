@@ -12,7 +12,7 @@ function checkEnvFileExists(fileName: string): boolean {
   return fs.existsSync(filePath);
 }
 
-// 文字列を安全にマスクする
+// 文字列を安全にマスク
 function maskString(str: string | undefined | null): string {
   if (!str) return 'not set';
   if (str.length <= 8) return '********';
@@ -30,8 +30,6 @@ export function checkEnvironment() {
   const envFiles = [
     { name: '.env', exists: checkEnvFileExists('.env') },
     { name: '.env.local', exists: checkEnvFileExists('.env.local') },
-    { name: `.env.${config.nodeEnv}`, exists: checkEnvFileExists(`.env.${config.nodeEnv}`) },
-    { name: `.env.${config.nodeEnv}.local`, exists: checkEnvFileExists(`.env.${config.nodeEnv}.local`) },
   ];
   
   console.log('環境変数ファイル:');
@@ -47,22 +45,13 @@ export function checkEnvironment() {
     console.log(`- ポート: ${dbUrl.port || 'デフォルト'}`);
     console.log(`- ユーザー: ${dbUrl.username}`);
     console.log(`- データベース: ${dbUrl.pathname.replace('/', '')}`);
-    console.log(`- ソース: ${process.env.DATABASE_URL ? '環境変数' : 'デフォルト設定'}`);
   } catch (e) {
     console.error('データベースURL形式エラー:', e);
     console.error('設定されたURL:', config.databaseUrl);
   }
   
-  // Supabase設定
-  console.log('Supabase設定:');
-  console.log(`- URL: ${config.supabaseUrl}`);
-  console.log(`- Anon Key: ${maskString(config.supabaseAnonKey)}`);
-  console.log(`- Service Role Key: ${maskString(config.supabaseServiceRoleKey)}`);
-  console.log(`- JWT Secret: ${maskString(config.supabaseJwtSecret)}`);
-  
-  // 認証設定
   console.log('認証設定:');
-  console.log(`- NextAuth URL: ${config.nextAuthUrl}`);
+  console.log(`- NextAuth URL: ${config.nextAuthUrl || 'not set'}`);
   console.log(`- NextAuth Secret: ${maskString(config.nextAuthSecret)}`);
   
   console.log('====================');

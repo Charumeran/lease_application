@@ -26,10 +26,8 @@ const getDatabaseUrl = (): string => {
   const env = getNodeEnv();
   switch (env) {
     case 'production':
-      // 本番環境用のデータベースURL
-      return 'postgresql://postgres:KAT*bqn9ntf9hbg-mey@db.pvgidfopxijmgzedqpht.supabase.co:5432/postgres';
-    case 'staging':
-      return 'postgresql://postgres:[PASSWORD]@staging-db.supabase.co:5432/postgres';
+      // 本番環境用のデータベースURLはVercelで環境変数として設定する
+      return 'postgresql://postgres:postgres@localhost:5432/postgres';
     case 'test':
       return 'postgresql://postgres:postgres@localhost:5432/lease_test_db';
     case 'development':
@@ -41,53 +39,19 @@ const getDatabaseUrl = (): string => {
 
 // Supabase URL を取得
 const getSupabaseUrl = (): string => {
-  // 環境変数優先 - Vercelによって自動設定される可能性がある
   if (process.env.SUPABASE_URL) {
     return process.env.SUPABASE_URL;
   }
-  // Next.js用の公開環境変数
   if (process.env.NEXT_PUBLIC_SUPABASE_URL) {
     return process.env.NEXT_PUBLIC_SUPABASE_URL;
   }
 
-  const env = getNodeEnv();
-  switch (env) {
-    case 'production':
-      return 'https://pvgidfopxijmgzedqpht.supabase.co';
-    case 'staging':
-      return 'https://staging-project-id.supabase.co';
-    case 'development':
-    case 'test':
-    default:
-      return 'http://localhost:54321';
-  }
-};
-
-// Supabase Anon Keyを取得
-const getSupabaseAnonKey = (): string => {
-  // 環境変数優先 - Vercelによって自動設定される可能性がある
-  if (process.env.SUPABASE_ANON_KEY) {
-    return process.env.SUPABASE_ANON_KEY;
-  }
-  // Next.js用の公開環境変数
-  if (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    return process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  }
-  
-  return '';
-};
-
-// Supabase Service Role Keyを取得
-const getSupabaseServiceRoleKey = (): string => {
-  if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    return process.env.SUPABASE_SERVICE_ROLE_KEY;
-  }
+  // 環境変数がない場合は空の文字列を返す
   return '';
 };
 
 // 認証URLを取得
 const getNextAuthUrl = (): string => {
-  // .env, .env.local, または .env.production から読み込まれる
   if (process.env.NEXTAUTH_URL) {
     return process.env.NEXTAUTH_URL;
   }
@@ -95,7 +59,8 @@ const getNextAuthUrl = (): string => {
   const env = getNodeEnv();
   switch (env) {
     case 'production':
-      return 'https://your-production-domain.vercel.app';
+      // 本番環境用の認証URLはVercelで環境変数として設定する
+      return '';
     default:
       return 'http://localhost:3000';
   }
@@ -103,18 +68,11 @@ const getNextAuthUrl = (): string => {
 
 // 認証シークレットを取得
 const getNextAuthSecret = (): string => {
-  // .env, .env.local, または .env.production から読み込まれる
   if (process.env.NEXTAUTH_SECRET) {
     return process.env.NEXTAUTH_SECRET;
   }
   
-  const env = getNodeEnv();
-  switch (env) {
-    case 'production':
-      return 'production-secret-key-replace-this';
-    default:
-      return 'development-secret-key';
-  }
+  return 'development-secret-key';
 };
 
 // アプリケーション設定
@@ -129,11 +87,9 @@ export const config = {
   // データベース
   databaseUrl: getDatabaseUrl(),
   
-  // Supabase
+  // Supabase - 環境変数から取得
   supabaseUrl: getSupabaseUrl(),
-  supabaseAnonKey: getSupabaseAnonKey(),
-  supabaseServiceRoleKey: getSupabaseServiceRoleKey(),
-  supabaseJwtSecret: process.env.SUPABASE_JWT_SECRET || '',
+  supabaseAnonKey: process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
   
   // 認証
   nextAuthUrl: getNextAuthUrl(),
