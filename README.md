@@ -16,7 +16,7 @@
 - TypeScript
 - Tailwind CSS
 - Prisma
-- PostgreSQL
+- PostgreSQL（Supabase）
 - NextAuth.js
 
 ## 開発環境のセットアップ
@@ -42,6 +42,8 @@ NEXTAUTH_URL="http://localhost:3000"
 4. データベースマイグレーションを実行
 ```bash
 npx prisma migrate dev
+# または
+npm run migrate:dev
 ```
 
 5. サンプルデータの投入
@@ -53,6 +55,10 @@ npm run seed
 ```bash
 npm run dev
 ```
+
+## Supabaseデータベースのマイグレーション
+
+Vercelと連携したSupabaseデータベースにマイグレーションを適用する方法についての詳細は、[マイグレーションガイド](./docs/migration-guide.md)を参照してください。
 
 ## Vercelへのデプロイ方法
 

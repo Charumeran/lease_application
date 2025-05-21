@@ -7,7 +7,10 @@
     "build": "prisma generate && next build --no-lint",
     "start": "next start",
     "lint": "next lint",
-    "seed": "ts-node src/lib/seed-data.ts"
+    "seed": "ts-node src/lib/seed-data.ts",
+    "migrate:dev": "prisma migrate dev",
+    "migrate:prod": "dotenv-cli -e .env.production -- prisma migrate deploy",
+    "migrate:prepare": "echo 'DATABASE_URL=\"postgres://postgres.[PROJECT_ID]:[PASSWORD]@aws-0-ap-northeast-1.pooler.supabase.com:5432/postgres?sslmode=require\"' > .env.migration && dotenv-cli -e .env.migration -- prisma migrate deploy"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.9.1",
@@ -32,6 +35,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv-cli": "^8.0.0",
     "eslint": "^9",
     "eslint-config-next": "15.3.2",
     "tailwindcss": "^4",
